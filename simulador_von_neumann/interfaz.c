@@ -10,7 +10,7 @@ static void button_clicked(GtkWidget *widget, gpointer data)
 
 int main(int argc, char* argv[]){
 	gtk_init(&argc,&argv); // Iniciar gtk
-	GtkWidget* window,*cable,*labelUC,*labelIR,*labelPC,*labelRT,*labelFLAGS,*labelALU,*labelB1,*labelB2,*labelB3,*labelB4,*labelMAR,*labelMBR,*buttonUC,*buttonBUS,*buttonPC,*buttonIR,*buttonRT,*buttonFLAGS,*buttonALU,*buttonB1,*buttonB2,*buttonB3,*buttonB4,*buttonMAR,*buttonMBR,*table0,*table1,*table2,*table3,*table4,*table5,*table6,*table7,*table8,*vbox0,*vbox1,*vbox2,*vbox3,*hbox1;// Declarar widgets como punteros a widget
+	GtkWidget* window,*cable,*labelUC,*labelIR,*labelPC,*labelRT,*labelFLAGS,*labelALU,*labelB1,*labelB2,*labelB3,*labelB4,*labelMAR,*labelMBR,*buttonUC,*buttonBUS,*buttonPC,*buttonIR,*buttonRT,*buttonFLAGS,*buttonALU,*buttonB1,*buttonB2,*buttonB3,*buttonB4,*buttonMAR,*buttonMBR,*buttonPLAY,*buttonNEXT,*buttonINSTRUCTION,*table0,*table1,*table2,*table3,*table4,*table5,*table6,*table7,*table8,*vbox0,*vbox1,*vbox2,*vbox3,*hbox1,*hbox2,*hbox3;// Declarar widgets como punteros a widget
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);// Inicializa una ventana en el lado de arriba
 	g_signal_connect(window,"delete-event",G_CALLBACK(gtk_main_quit),NULL);	// Apretar boton X para salir de la interfaz
 	
@@ -40,6 +40,9 @@ int main(int argc, char* argv[]){
 	buttonB4 = gtk_button_new_with_label("B4");// Inicializa un boton
 	buttonMAR = gtk_button_new_with_mnemonic("_MAR");// Inicializa un boton
 	buttonMBR = gtk_button_new_with_mnemonic("M_BR");// Inicializa un boton
+	buttonPLAY = gtk_button_new_with_mnemonic("_PLAY");// Inicializa un boton
+	buttonNEXT = gtk_button_new_with_mnemonic("_>|");// Inicializa un boton
+	buttonINSTRUCTION = gtk_button_new_with_mnemonic("_Ingresar Instruccion");// Inicializa un boton
 	labelPC = gtk_label_new(" Program    Counter ");// Inicializa un label
 	labelUC = gtk_label_new(" Unidad  de  Control");// Inicializa un label
 	labelIR = gtk_label_new("Instruction Register");// Inicializa un label
@@ -48,10 +51,12 @@ int main(int argc, char* argv[]){
 	labelALU = gtk_label_new("Arithmetic-Logic Unit");// Inicializa un label
 	labelMAR = gtk_label_new(" Mem  Address  Reg.");// Inicializa un label
 	labelMBR = gtk_label_new("  Mem   Buffer   Reg.");// Inicializa un label
-	hbox1 = gtk_hbox_new(0,0);// 1er parametro: tamano homogeneo de componentes, 2do: espacio entre componentes
-	vbox0 = gtk_vbox_new(0,40);// 1er parametro: tamano homogeneo de componentes, 2do: espacio entre componentes
-	vbox1 = gtk_vbox_new(0,0);// 1er parametro: tamano homogeneo de componentes, 2do: espacio entre componentes
-	vbox2 = gtk_vbox_new(0,40);// 1er parametro: tamano homogeneo de componentes, 2do: espacio entre componentes
+	hbox1 = gtk_hbox_new(0,0);// 1er parametro: tamano homogeneo de componentes, 2do: espacio entre componentes -> main
+	hbox2 = gtk_hbox_new(0,20);// 1er parametro: tamano homogeneo de componentes, 2do: espacio entre componentes -> control panel
+	hbox3 = gtk_hbox_new(0,20);// 1er parametro: tamano homogeneo de componentes, 2do: espacio entre componentes -> control panel
+	vbox0 = gtk_vbox_new(0,20);// 1er parametro: tamano homogeneo de componentes, 2do: espacio entre componentes -> primera columna
+	vbox1 = gtk_vbox_new(0,60);// 1er parametro: tamano homogeneo de componentes, 2do: espacio entre componentes -> segunda columna
+	vbox2 = gtk_vbox_new(0,20);// 1er parametro: tamano homogeneo de componentes, 2do: espacio entre componentes -> tercera columna
 	
 	gtk_widget_modify_bg (GTK_WIDGET(buttonUC), GTK_STATE_NORMAL, &color);
 	//gtk_button_set_always_show_image (GTK_BUTTON (buttonUC), TRUE);
@@ -93,7 +98,10 @@ int main(int argc, char* argv[]){
     cable = gtk_image_new_from_file ("cable.png");
     gtk_table_attach(GTK_TABLE(table7), labelMBR, 0,1,0,1, GTK_FILL,GTK_FILL, 0,0);// Pega el label a la tabla
     gtk_table_attach(GTK_TABLE(table7), buttonMBR, 0,1,1,2, GTK_FILL, GTK_FILL, 0,0);// Pega el boton a la tabla	
-    gtk_table_attach(GTK_TABLE(table7), cable, 1,2,1,2, GTK_FILL, GTK_FILL, 0,0);// Pega el boton a la tabla  	
+    gtk_table_attach(GTK_TABLE(table7), cable, 1,2,1,2, GTK_FILL, GTK_FILL, 0,0);// Pega el boton a la tabla  
+
+	gtk_box_pack_start(GTK_BOX(hbox2),buttonPLAY,1,1,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
+	gtk_box_pack_start(GTK_BOX(hbox2),buttonNEXT,1,1,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
 
 	gtk_box_pack_start(GTK_BOX(vbox0),table0,0,0,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
 	gtk_box_pack_start(GTK_BOX(vbox0),table2,0,0,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
@@ -101,6 +109,7 @@ int main(int argc, char* argv[]){
 	gtk_box_pack_start(GTK_BOX(vbox0),table6,0,0,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
 	gtk_box_pack_start(GTK_BOX(vbox0),table7,0,0,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
 	gtk_box_pack_start(GTK_BOX(vbox1),buttonBUS,1,1,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
+	gtk_box_pack_start(GTK_BOX(vbox1),hbox2,0,0,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
 	gtk_box_pack_start(GTK_BOX(vbox2),table3,0,0,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
 	gtk_box_pack_start(GTK_BOX(vbox2),table4,0,0,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
 	gtk_box_pack_start(GTK_BOX(vbox2),table5,0,0,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
@@ -109,12 +118,15 @@ int main(int argc, char* argv[]){
 	gtk_box_pack_start(GTK_BOX(hbox1),vbox1,0,0,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
 	gtk_box_pack_start(GTK_BOX(hbox1),vbox2,0,0,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
 
+	gtk_box_pack_start(GTK_BOX(hbox3),hbox1,0,0,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
+	gtk_box_pack_start(GTK_BOX(hbox3),buttonINSTRUCTION,1,1,0); // Container, componente, Resizable, Fill, Espacio + gtk_vbox_new() 
+
     //button = gtk_button_new_with_mnemonic("B_utton");
 	//label = gtk_label_new("Hello World");
 
     //gtk_table2_attach(GTK_table2(table2), label, 0,1,1,2, GTK_FILL, GTK_FILL, 0,0);
     //gtk_table2_attach(GTK_table2(table2), button, 1,2,1,2, GTK_FILL, GTK_FILL, 0,0);
-    gtk_container_add(GTK_CONTAINER(window), hbox1);
+    gtk_container_add(GTK_CONTAINER(window), hbox3);
 	//g_signal_connect(button,"clicked",G_CALLBACK(button_clicked),label);
 
 	//gtk_label_set_text(GTK_LABEL(label),"World Hello");
@@ -122,7 +134,7 @@ int main(int argc, char* argv[]){
 	//gtk_container_add(GTK_CONTAINER(window),hbox);
 	//gtk_container_add(GTK_CONTAINER(window),label);
 
-	gtk_widget_set_size_request(window,1200,600);// Tamaño de la ventana: x, y
+	gtk_widget_set_size_request(window,1200,400);// Tamaño de la ventana: x, y
 	gtk_window_set_title(GTK_WINDOW(window),"Simulador Von Neumann");// Nombre de la ventana
 	gtk_widget_show_all(window);// Para mostrar la ventana y sus componentes (window tiene los componentes)
 	gtk_main();	// Ciclo infinito para correr la interfaz
