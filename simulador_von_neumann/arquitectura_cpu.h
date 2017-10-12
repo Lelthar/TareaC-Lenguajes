@@ -1,25 +1,28 @@
 
 struct Registro{
-	int parteBaja;
-	int parteAlta;
+	int valor;
 };
 
 struct Flags{
-	char carry_flag;
-	char signal_flag;
-	char zero_flag;
-	char interruption_flag;
+	int carry_flag;
+	int signal_flag;
+	int zero_flag;
+	int interruption_flag;
 };
 
 typedef struct {
 	
-	//numero de 16 bits
+	/*numero de 16 bits*/
 	int numero;
 
-	//instruccion
+	int numero_instruccion;
+
+	int esInstruccion;
+
+	/*instruccion*/
 	char operacion[3];
-	char fuente_operando[10];
-	char destino_operando[10];
+	int fuente_operando;
+	int destino_operando;
 	int dato_extra;
 }Memoria;
 
@@ -28,9 +31,9 @@ struct Program_counter{
 };
 
 struct Instruction_register{
-	char operacion[3];
-	char fuente_operando[10];
-	char destino_operando[10];
+	int operacion;
+	int fuente_operando;
+	int destino_operando;
 };
 
 struct Unidad_de_control{
@@ -41,7 +44,6 @@ struct Unidad_de_control{
 
 struct Bus_de_datos{
 	int entrada;
-	int salida;
 };
 
 struct Aritmetic_logic_unit{
@@ -67,4 +69,5 @@ typedef struct {
 	struct Unidad_de_control unidad_de_control;
 	struct Bus_de_datos bus_de_datos;
 	struct Aritmetic_logic_unit aritmetic_logic_unit;
+	struct Registro_de_trabajo registro_de_trabajo;
 }ArquitecturaCPU;
