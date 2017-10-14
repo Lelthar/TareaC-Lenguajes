@@ -1,7 +1,0 @@
-prueba.txt
-casa.txt
-puto.txt
-arriaga.txt
-prueba1.txt
-prueba2.txt
-prueba3.txt

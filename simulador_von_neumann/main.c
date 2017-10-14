@@ -10,28 +10,13 @@
 int main(){
 
 
-	char nombre[] = {"prueba.txt"};
+	char nombre[] = {"AFOC1mov.txt"};
 	char *puntero = &nombre[0];
+	setRegistroAx(256);
 
-	char nombre1[] = {"IN"};
-	char *puntero1 = &nombre1[0];
-
-	char *puntero3 = obtenerOperandoUnidad(puntero1);
-	printf("%s\n",puntero3);
-	/*char texto[] = {"puerta.txt"};
-	char *punteroTexto = &nombre[0];
-	rintf("Se creó\n");*/
-	/*EscribirText(puntero,puntero1);*/
-	/*int largo = cantidadFilasArchivo(puntero);
-	printf("Cantidad filas archivo: %d\n", largo);
+	ejecutarMicroPrograma(puntero);
+	printf("%d\n", getRegistroBx());
 	
-	char *puntero2;*/
-	
-	/*if(strcmp(puntero,puntero1) == 0){
-		printf("si\n");
-	}else{
-		printf("no\n");
-	}*/
 
 	
 	
@@ -90,7 +75,7 @@ void inicializadorArquitecturaProcesador(){
 	arquitectura.unidad_de_control.operando2 = 0;
 
 	/*bus_de_datos*/
-	arquitectura.bus_de_datos.entrada = 0;
+	arquitectura.bus_de_datos.numero = 0;
 
 	/*aritmetic_logic_unit*/
 	arquitectura.aritmetic_logic_unit.operacion = 0;
@@ -507,14 +492,11 @@ int getInterruptionCarryFlag(){
 	return arquitectura.flags.interruption_flag;
 }
 
-void setCeldaMemoriaInstruccion(int posicion,char *operacion,int operando1,int operando2){
-	int i;
-	for(i = 0; i < 3; i++){
-		arquitectura.memoria[posicion].operacion[i] = *operacion;
-		operacion+=1;
-	}
+void setCeldaMemoriaInstruccion(int posicion,int operacion,int operando1,int operando2,int datoExtra){
+	arquitectura.memoria[posicion].operacion = operacion;
 	arquitectura.memoria[posicion].fuente_operando = operando1;
 	arquitectura.memoria[posicion].destino_operando = operando2;
+	arquitectura.memoria[posicion].dato_extra = datoExtra;
 	arquitectura.memoria[posicion].esInstruccion = 1;
 }
 
@@ -536,39 +518,31 @@ int getProgramCounter(){
 	return arquitectura.program_counter.numero_memoria;
 }
 
-void setInstruccionRegister(int operacion,int operando1,int operando2){
+void setInstruccionRegister(int operacion,int operando1,int operando2,int datoExtra){
 
-	/*for(i = 0; i < 3; i++){
-		arquitectura.instruction_register.operacion[i] = *operacion;
-		operacion+=1;
-	}*/
 	arquitectura.instruction_register.operacion = operacion;
 	arquitectura.instruction_register.fuente_operando = operando1;
 	arquitectura.instruction_register.destino_operando = operando2;
+	arquitectura.instruction_register.dato_extra = datoExtra;
 }
 
-/*void setUnidadControl(char*instruccion, int*listaOperandos,int largo){
-	char lista[3];
-	int i;
-	for(i = 0; i < 3; i++){
-		lista[i] = *instruccion;
-		instruccion += 1;
-	}
-	if(strcmp(lista,"sum") == 0){
-		
-	}else if(strcmp(lista,"mov") == 0){
-		
-	}
-	
-}*/
 
-void setBusDatos(entrada){
-	arquitectura.bus_de_datos.entrada = entrada;
+void setBusDatosAtributo(entrada){
+	arquitectura.bus_de_datos.numero = entrada;
 }
 
-int getBusDatos(){
-	return arquitectura.bus_de_datos.entrada;
+void setBusDatosInstruccion(operacion,operando1,operando2,datoExtra){
+	arquitectura.bus_de_datos.operacion = operacion;
+	arquitectura.bus_de_datos.fuente_operando = operando1;
+	arquitectura.bus_de_datos.destino_operando = operando2;
+	arquitectura.bus_de_datos.dato_extra = datoExtra;
 }
+
+int getBusDatosAtributo(){
+	return arquitectura.bus_de_datos.numero;
+}
+
+
 
 void setALU(operacion,operando1,operando2){
 	arquitectura.aritmetic_logic_unit.operacion = operacion;
@@ -576,9 +550,20 @@ void setALU(operacion,operando1,operando2){
 	arquitectura.aritmetic_logic_unit.b2 = operando2;
 }
 
+void setMBRInstruccion(operacion,operando1,operando2,datoExtra){
+	arquitectura.MBR.operacion = operacion;
+	arquitectura.MBR.fuente_operando = operando1;
+	arquitectura.MBR.destino_operando = operando2;
+	arquitectura.MBR.dato_extra = datoExtra;
+}
+
+void setMBRDato(numero){
+	arquitectura.MBR.numero = numero;
+}
+
 void escribirArchivoEstructura(){
 	struct Bus_de_datos *object = malloc(sizeof(struct Bus_de_datos));
-	object->entrada = 5;
+	object->numero = 5;
 
 	FILE * file= fopen("output", "wb");
 	if (file != NULL) {
@@ -596,7 +581,7 @@ void leerArchivoEstructura(){
         free(object2);
         fclose(file);
     }
-    printf("%d\n", object2->entrada);
+    printf("%d\n", object2->numero);
 }
 
 /*void escribirText(){
@@ -621,15 +606,6 @@ char *leerMicroInstruccion(int posicion,char *nombreArchivo){
     		}
 	         
 	    }
-    	/*while(!feof(file)){
-    		if(posicion == 0){
-    			fgets(line,sizeof(line),file);
-    			break;
-    		}else{
-    			fgets(line,sizeof(line),file);
-    			posicion-=1;
-    		}
-    	}*/
 
 	    int i;
 	    for(i = 0; i < strlen(line);i++){
@@ -697,13 +673,13 @@ void operacionALU(){
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 & arquitectura.aritmetic_logic_unit.b2;
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 5){ /*OR*/
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 | arquitectura.aritmetic_logic_unit.b2;
-	}else if(arquitectura.aritmetic_logic_unit.operacion == 6){ /*Resta*/
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 6){ /*xor*/
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 ^ arquitectura.aritmetic_logic_unit.b2;
-	}else if(arquitectura.aritmetic_logic_unit.operacion == 7){ /*Resta*/
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 7){ /*NOT*/
 		arquitectura.aritmetic_logic_unit.b3 = ~ arquitectura.aritmetic_logic_unit.b1;
-	}else if(arquitectura.aritmetic_logic_unit.operacion == 8){ /*Resta*/
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 8){ /*SHR*/
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 << arquitectura.aritmetic_logic_unit.b2;
-	}else if(arquitectura.aritmetic_logic_unit.operacion == 9){ /*Resta*/
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 9){ /*SHL*/
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 >> arquitectura.aritmetic_logic_unit.b2;
 	}
 }
@@ -879,16 +855,177 @@ char* obtenerOperandoUnidad(char *instruccion){
 	return puntero;
 }
 
-void operacionWrite(){
+void operacionWriteValor(){
+	/*arquitectura.memoria[arquitectura.MAR.direccion].operacion = arquitectura.MBR.operacion;
+	arquitectura.memoria[arquitectura.MAR.direccion].fuente_operando = arquitectura.MBR.fuente_operando;
+	arquitectura.memoria[arquitectura.MAR.direccion].destino_operando = arquitectura.MBR.destino_operando;
+	arquitectura.memoria[arquitectura.MAR.direccion].dato_extra = arquitectura.MBR.dato_extra;*/
+	arquitectura.memoria[arquitectura.MAR.direccion].numero = arquitectura.MBR.numero;
+}
+
+void operacionWriteInstruccion(){
 	arquitectura.memoria[arquitectura.MAR.direccion].operacion = arquitectura.MBR.operacion;
 	arquitectura.memoria[arquitectura.MAR.direccion].fuente_operando = arquitectura.MBR.fuente_operando;
 	arquitectura.memoria[arquitectura.MAR.direccion].destino_operando = arquitectura.MBR.destino_operando;
 	arquitectura.memoria[arquitectura.MAR.direccion].dato_extra = arquitectura.MBR.dato_extra;
+
 }
 
-void operacionRead(){
+void operacionReadValor(){
+	/*arquitectura.MBR.operacion = arquitectura.memoria[arquitectura.MAR.direccion].operacion;
+	arquitectura.MBR.fuente_operando = arquitectura.memoria[arquitectura.MAR.direccion].fuente_operando;
+	arquitectura.MBR.destino_operando = arquitectura.memoria[arquitectura.MAR.direccion].destino_operando;
+	arquitectura.MBR.dato_extra = arquitectura.memoria[arquitectura.MAR.direccion].dato_extra;*/
+	arquitectura.MBR.numero = arquitectura.memoria[arquitectura.MAR.direccion].numero;
+}
+
+void operacionReadInstruccion(){
 	arquitectura.MBR.operacion = arquitectura.memoria[arquitectura.MAR.direccion].operacion;
 	arquitectura.MBR.fuente_operando = arquitectura.memoria[arquitectura.MAR.direccion].fuente_operando;
 	arquitectura.MBR.destino_operando = arquitectura.memoria[arquitectura.MAR.direccion].destino_operando;
 	arquitectura.MBR.dato_extra = arquitectura.memoria[arquitectura.MAR.direccion].dato_extra;
+}
+
+void microInstruccionRealizar(char *instruccion){
+	if(strcmp(instruccion,"BD<-UC") == 0){
+
+	}else if(strcmp(instruccion,"UC<-BD") == 0){
+
+	}else if(strcmp(instruccion,"BD<-PC") == 0){
+		setBusDatosAtributo(getProgramCounter());
+	}else if(strcmp(instruccion,"PC<-BD") == 0){
+		setProgramCounter(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"BD<-IR") == 0){
+		setBusDatosInstruccion(arquitectura.instruction_register.operacion,arquitectura.instruction_register.fuente_operando,arquitectura.instruction_register.destino_operando,arquitectura.instruction_register.dato_extra);
+	}else if(strcmp(instruccion,"IR<-BD") == 0){
+		setInstruccionRegister(arquitectura.bus_de_datos.operacion,arquitectura.bus_de_datos.fuente_operando,arquitectura.bus_de_datos.destino_operando,arquitectura.bus_de_datos.dato_extra);
+	}else if(strcmp(instruccion,"BD<-MAR") == 0){
+		setBusDatosAtributo(arquitectura.MAR.direccion);
+	}else if(strcmp(instruccion,"MAR<-BD") == 0){
+		arquitectura.MAR.direccion = getBusDatosAtributo();
+	}else if(strcmp(instruccion,"BD<-MBR") == 0){
+		setBusDatosAtributo(arquitectura.MBR.numero);
+		setBusDatosInstruccion(arquitectura.MBR.operacion,arquitectura.MBR.fuente_operando,arquitectura.MBR.destino_operando,arquitectura.MBR.dato_extra);
+	}else if(strcmp(instruccion,"MBR<-BD") == 0){
+		setMBRInstruccion(arquitectura.bus_de_datos.operacion,arquitectura.bus_de_datos.fuente_operando,arquitectura.bus_de_datos.destino_operando,arquitectura.bus_de_datos.dato_extra);
+	}else if(strcmp(instruccion,"AX<-BD") == 0){
+		setRegistroAx(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"BX<-BD") == 0){
+		setRegistroBx(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"CX<-BD") == 0){
+		setRegistroCx(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"DX<-BD") == 0){
+		setRegistroDx(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"BD<-AX") == 0){
+		setBusDatosAtributo(getRegistroAx());
+	}else if(strcmp(instruccion,"BD<-BX") == 0){
+		setBusDatosAtributo(getRegistroBx());
+	}else if(strcmp(instruccion,"BD<-CX") == 0){
+		setBusDatosAtributo(getRegistroCx());
+	}else if(strcmp(instruccion,"BD<-DX") == 0){
+		setBusDatosAtributo(getRegistroDx());
+	}else if(strcmp(instruccion,"AH<-BD") == 0){
+		setParteAltaAX(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"AL<-BD") == 0){
+		setParteBajaAX(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"BH<-BD") == 0){
+		setParteAltaBX(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"BL<-BD") == 0){
+		setParteBajaBX(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"CH<-BD") == 0){
+		setParteAltaCX(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"CL<-BD") == 0){
+		setParteBajaCX(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"DH<-BD") == 0){
+		setParteAltaDX(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"DL<-BD") == 0){
+		setParteBajaDX(getBusDatosAtributo());
+	}else if(strcmp(instruccion,"BD<-AH") == 0){
+		setBusDatosAtributo(getParteAltaAX());
+	}else if(strcmp(instruccion,"BD<-AL") == 0){
+		setBusDatosAtributo(getParteBajaAX());
+	}else if(strcmp(instruccion,"BD<-BH") == 0){
+		setBusDatosAtributo(getParteAltaBX());
+	}else if(strcmp(instruccion,"BD<-BL") == 0){
+		setBusDatosAtributo(getParteBajaBX());
+	}else if(strcmp(instruccion,"BD<-CH") == 0){
+		setBusDatosAtributo(getParteAltaCX());
+	}else if(strcmp(instruccion,"BD<-CL") == 0){
+		setBusDatosAtributo(getParteBajaCX());
+	}else if(strcmp(instruccion,"BD<-DH") == 0){
+		setBusDatosAtributo(getParteAltaDX());
+	}else if(strcmp(instruccion,"BD<-DL") == 0){
+		setBusDatosAtributo(getParteBajaDX());
+	}else if(strcmp(instruccion,"B1<-BD") == 0){
+		arquitectura.aritmetic_logic_unit.b1 = arquitectura.bus_de_datos.fuente_operando;
+	}else if(strcmp(instruccion,"B2<-BD") == 0){
+		arquitectura.aritmetic_logic_unit.b2 = arquitectura.bus_de_datos.destino_operando;
+	}else if(strcmp(instruccion,"BD<-B3") == 0){
+		arquitectura.bus_de_datos.fuente_operando = arquitectura.aritmetic_logic_unit.b3;
+	}else if(strcmp(instruccion,"BD<-B4") == 0){
+		arquitectura.bus_de_datos.destino_operando = arquitectura.aritmetic_logic_unit.b4;
+	}else if(strcmp(instruccion,"ALU:add") == 0){
+		arquitectura.aritmetic_logic_unit.operacion = 0;
+		operacionALU();
+	}else if(strcmp(instruccion,"ALU:sub") == 0){
+		arquitectura.aritmetic_logic_unit.operacion = 1;
+		operacionALU();
+	}else if(strcmp(instruccion,"ALU:mul") == 0){
+		arquitectura.aritmetic_logic_unit.operacion = 2;
+		operacionALU();
+	}else if(strcmp(instruccion,"ALU:div") == 0){
+		arquitectura.aritmetic_logic_unit.operacion = 3;
+		operacionALU();
+	}else if(strcmp(instruccion,"ALU:and") == 0){
+		arquitectura.aritmetic_logic_unit.operacion = 4;
+		operacionALU();
+	}else if(strcmp(instruccion,"ALU:or") == 0){
+		arquitectura.aritmetic_logic_unit.operacion = 5;
+		operacionALU();
+	}else if(strcmp(instruccion,"ALU:xor") == 0){
+		arquitectura.aritmetic_logic_unit.operacion = 6;
+		operacionALU();
+	}else if(strcmp(instruccion,"ALU:not") == 0){ 
+		arquitectura.aritmetic_logic_unit.operacion = 7;
+		operacionALU();
+	}else if(strcmp(instruccion,"ALU:shr") == 0){
+		arquitectura.aritmetic_logic_unit.operacion = 8;
+		operacionALU();
+	}else if(strcmp(instruccion,"ALU:shl") == 0){
+		arquitectura.aritmetic_logic_unit.operacion = 9;
+		operacionALU();
+	}else if(strcmp(instruccion,"TEST:carry") == 0){
+
+	}else if(strcmp(instruccion,"TEST:sign") == 0){
+
+	}else if(strcmp(instruccion,"TEST:zero") == 0){
+
+	}else if(strcmp(instruccion,"TEST:interrupt") == 0){
+
+	}else if(strcmp(instruccion,"MEM:read") == 0){
+		setMBRInstruccion(arquitectura.memoria[arquitectura.MAR.direccion].operacion,arquitectura.memoria[arquitectura.MAR.direccion].fuente_operando,arquitectura.memoria[arquitectura.MAR.direccion].destino_operando,arquitectura.memoria[arquitectura.MAR.direccion].dato_extra);
+		setMBRDato(arquitectura.memoria[arquitectura.MAR.direccion].numero);
+	}else if(strcmp(instruccion,"MEM:write") == 0){
+		setCeldaMemoriaNumero(arquitectura.MAR.direccion,arquitectura.MBR.numero);
+		setCeldaMemoriaInstruccion(arquitectura.MAR.direccion,arquitectura.MBR.operacion,arquitectura.MBR.fuente_operando,arquitectura.MBR.destino_operando,arquitectura.MBR.dato_extra);
+	}else if(strcmp(instruccion,"In") == 0){
+		/*Hacer*/
+	}else if(strcmp(instruccion,"Out") == 0){
+		/*Hacer*/
+	}else{
+		printf("No existe la microinstruccion\n");
+	}
+}
+
+void ejecutarMicroPrograma(char* nombreArchivoMP){
+	int largo = cantidadFilasArchivo(nombreArchivoMP);
+	char *puntero = (char *) malloc(sizeof(nombreArchivoMP));;
+	int i;
+
+	for(i = 0; i < largo; i++){
+		puntero = leerMicroInstruccion(i,nombreArchivoMP);
+		/*printf("%s\n", puntero);*/
+		microInstruccionRealizar(puntero);		
+	}
+	
 }

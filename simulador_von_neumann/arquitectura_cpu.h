@@ -45,7 +45,7 @@ struct Unidad_de_control{
 
 struct Bus_de_datos{
 	/*Este dato es por si le pasan un registro*/
-	int entrada;
+	int numero;
 
 	int operacion;
 	int fuente_operando;
@@ -73,6 +73,8 @@ struct Memory_buffer_register{
 	int fuente_operando;
 	int destino_operando;
 	int dato_extra;
+
+	int numero;
 };
 
 struct Memory_address_register{
@@ -142,19 +144,23 @@ int getSignalFlag(void);
 int getZeroFlag(void);
 int getInterruptionCarryFlag(void);
 
-void setCeldaMemoriaInstruccion(int,char*,int,int);
+void setCeldaMemoriaInstruccion(int,int,int,int,int);
 void setCeldaMemoriaNumero(int,int);
 
 void setProgramCounter(int);
 int getProgramCounter(void);
 
-void setInstruccionRegister(int,int,int);
+void setInstruccionRegister(int,int,int,int);
 
 /*void setUnidadControl(char*,int,int);*/
-void setBusDatos(int);
-int getBusDatos(void);
+void setBusDatosAtributo(int);
+int getBusDatosAtributo(void);
+void setBusDatosInstruccion(int,int,int,int);
 
 void setALU(int,int,int);
+
+void setMBRInstruccion(int,int,int,int);
+void setMBRDato(int);
 
 void escribirArchivoEstructura(void);
 void leerArchivoEstructura(void);
@@ -176,5 +182,11 @@ char *obtenerOperando2N(char*);
 char *obtenerOperando2D(char*);
 char *obtenerOperandoUnidad(char*);
 
-void operacionWrite(void);
-void operacionRead(void);
+void operacionWriteValor(void);
+void operacionWriteInstruccion(void);
+void operacionReadValor(void);
+void operacionReadInstruccion(void);
+
+void microInstruccionRealizar(char*);
+
+void ejecutarMicroPrograma(char*);
