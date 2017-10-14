@@ -1,5 +1,3 @@
-prueba.txtcasa
-prueba.txt
-prueba.txt
-prueba.txt
-prueba.txt
+casa
+pata
+perro

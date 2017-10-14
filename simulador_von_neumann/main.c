@@ -1,7 +1,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "arquitectura_cpu.h"
 
@@ -80,22 +79,32 @@ void EscribirText(char*,char*);
 
 int main(){
 
-	
+	/*setParteAltaAX(1);*/
+	/*setParteBajaAX(255);*/
+	/*setProgramCounter(256);*/
+	/*printf("%d\n",getProgramCounter());*/
+	/*char palabra[3] = {"mov"};
+	char *puntero = &palabra[0];
+	setUnidadControl(puntero,1,2);*/
+	/*printf("El registro AX tiene: %d y la parte alta tiene: %d La parte baja tiene: %d\n", getRegistroAx(),getParteAltaAX(),getParteBajaAX());*/
+ 	/*printPuntero(puntero,16);*/
+	/*escribirArchivoEstructura();*/
 	char nombre[] = {"prueba.txt"};
 	char *puntero = &nombre[0];
 	//char texto[] = {"puerta.txt"};
 	//char *punteroTexto = &nombre[0];
 	//printf("Se creó\n");
-	int posicion = 0;
-	//char *puntero = &;
+	int posicion = 1;
+	char *puntero2;
 	puntero = leerMicroInstruccion(posicion,puntero);
-	printf("%s\n", puntero);
+	printf("%s", puntero);
 	//obtenerSegundoOperando(puntero);
 	//setALU(9,60,2);
 	//operacionALU();
 	//printf("El b3 tiene: %d y el b4 tiene: %d\n", arquitectura.aritmetic_logic_unit.b3,arquitectura.aritmetic_logic_unit.b4);
-	//EscribirText(puntero,punteroTexto);
-
+	/*EscribirText(puntero,punteroTexto);*/
+	//printf("%s\n",puntero);
+	/*leerArchivoEstructura();*/
 	return 0;
 }
 
@@ -667,7 +676,7 @@ char *leerMicroInstruccion(int posicion,char *nombreArchivo){
 	//char fileName[] = {"prueba.txt"};
     FILE* file = fopen(nombreArchivo, "r"); /* should check the result */
     char line[256];
-    char *str;
+    char *str = (char *) malloc(sizeof(line));
    //char *puntero; 
     if(file != NULL){
     	while (fgets(line, sizeof(line), file)) {
@@ -675,14 +684,18 @@ char *leerMicroInstruccion(int posicion,char *nombreArchivo){
 	           presence would allow to handle lines longer that sizeof(line) */
     		if(posicion == 0){
     			//printf("%s", line);
-    			strcpy(str,line);
     			break;
     		}else{
     			posicion-=1;
     		}
 	         
 	    }
-	    
+	    int i;
+	    for(i = 0; i < 256;i++){
+	    	*str = line[i];
+	    	str += 1;
+	    }
+	    str -= 256;
 
 	    /* may check feof here to make a difference between eof and io failure -- network
 	       timeout for instance */
