@@ -12,10 +12,22 @@ int main(){
 
 	char nombre[] = {"AFOC1mov.txt"};
 	char *puntero = &nombre[0];
-	setRegistroAx(256);
 
+	char nombre1[] = {"TEST:ZF,2"};
+	char *puntero1 = &nombre1[0];
+
+	/*puntero = obtenerFlag(puntero1);
+	printf("%s\n", puntero1);*/
+	setRegistroAx(6);
+	setRegistroBx(5);
 	ejecutarMicroPrograma(puntero);
-	printf("%d\n", getRegistroBx());
+	/*arquitectura.aritmetic_logic_unit.b1 = getRegistroAx();
+	arquitectura.aritmetic_logic_unit.b2 = getRegistroBx();*/
+	/*microInstruccionRealizar(puntero1);*/
+	/**/
+	/*setRegistroCx(arquitectura.aritmetic_logic_unit.b3);*/
+
+	printf("RegistroCX: %d RegistroDX: %d\n", getRegistroCx(),getRegistroDx());
 	
 
 	
@@ -622,7 +634,6 @@ char *leerMicroInstruccion(int posicion,char *nombreArchivo){
 
 	    fclose(file);
 	    free(str);
-	  	
 	    return str;	
     		
     }else{
@@ -658,29 +669,108 @@ int cantidadFilasArchivo(char *nombreArchivo){
 }
 
 
-
 void operacionALU(){
 	if(arquitectura.aritmetic_logic_unit.operacion == 0){ /*Suma*/
-		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 + arquitectura.aritmetic_logic_unit.b2;
+		int resultado = arquitectura.aritmetic_logic_unit.b1 + arquitectura.aritmetic_logic_unit.b2;
+		arquitectura.aritmetic_logic_unit.b3 = resultado;
+		if(resultado == 0){
+			arquitectura.flags.zero_flag = 1;
+		}else if(resultado > 65535){
+			arquitectura.flags.carry_flag = 1;
+		}else if(resultado < 0){
+			arquitectura.flags.signal_flag = 1;
+		}
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 1){ /*Resta*/
-		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 - arquitectura.aritmetic_logic_unit.b2;
+		int resultado = arquitectura.aritmetic_logic_unit.b1 - arquitectura.aritmetic_logic_unit.b2;
+		arquitectura.aritmetic_logic_unit.b3 = resultado;
+		if(resultado == 0){
+			arquitectura.flags.zero_flag = 1;
+		}else if(resultado > 65535){
+			arquitectura.flags.carry_flag = 1;
+		}else if(resultado < 0){
+			arquitectura.flags.signal_flag = 1;
+		}
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 2){ /*MUL*/
-		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 * arquitectura.aritmetic_logic_unit.b2;
+		int resultado = arquitectura.aritmetic_logic_unit.b1 * arquitectura.aritmetic_logic_unit.b2;
+		arquitectura.aritmetic_logic_unit.b3 = resultado;
+		if(resultado == 0){
+			arquitectura.flags.zero_flag = 1;
+		}else if(resultado > 65535){
+			arquitectura.flags.carry_flag = 1;
+		}else if(resultado < 0){
+			arquitectura.flags.signal_flag = 1;
+		}
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 3){ /*DIV*/
-		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 / arquitectura.aritmetic_logic_unit.b2;
+		int resultado = arquitectura.aritmetic_logic_unit.b1 / arquitectura.aritmetic_logic_unit.b2;
+		arquitectura.aritmetic_logic_unit.b3 = resultado;
 		arquitectura.aritmetic_logic_unit.b4 = arquitectura.aritmetic_logic_unit.b1 % arquitectura.aritmetic_logic_unit.b2;
+		if(resultado == 0){
+			arquitectura.flags.zero_flag = 1;
+		}else if(resultado > 65535){
+			arquitectura.flags.carry_flag = 1;
+		}else if(resultado < 0){
+			arquitectura.flags.signal_flag = 1;
+		}
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 4){ /*AND*/
-		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 & arquitectura.aritmetic_logic_unit.b2;
+		int resultado = arquitectura.aritmetic_logic_unit.b1 & arquitectura.aritmetic_logic_unit.b2;
+		arquitectura.aritmetic_logic_unit.b3 = resultado;
+		if(resultado == 0){
+			arquitectura.flags.zero_flag = 1;
+		}else if(resultado > 65535){
+			arquitectura.flags.carry_flag = 1;
+		}else if(resultado < 0){
+			arquitectura.flags.signal_flag = 1;
+		}
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 5){ /*OR*/
-		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 | arquitectura.aritmetic_logic_unit.b2;
+		int resultado = arquitectura.aritmetic_logic_unit.b1 | arquitectura.aritmetic_logic_unit.b2;
+		arquitectura.aritmetic_logic_unit.b3 = resultado;
+		if(resultado == 0){
+			arquitectura.flags.zero_flag = 1;
+		}else if(resultado > 65535){
+			arquitectura.flags.carry_flag = 1;
+		}else if(resultado < 0){
+			arquitectura.flags.signal_flag = 1;
+		}
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 6){ /*xor*/
-		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 ^ arquitectura.aritmetic_logic_unit.b2;
+		int resultado = arquitectura.aritmetic_logic_unit.b1 ^ arquitectura.aritmetic_logic_unit.b2;
+		arquitectura.aritmetic_logic_unit.b3 = resultado;
+		if(resultado == 0){
+			arquitectura.flags.zero_flag = 1;
+		}else if(resultado > 65535){
+			arquitectura.flags.carry_flag = 1;
+		}else if(resultado < 0){
+			arquitectura.flags.signal_flag = 1;
+		}
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 7){ /*NOT*/
-		arquitectura.aritmetic_logic_unit.b3 = ~ arquitectura.aritmetic_logic_unit.b1;
+		int resultado = ~ arquitectura.aritmetic_logic_unit.b1;
+		arquitectura.aritmetic_logic_unit.b3 = resultado;
+		if(resultado == 0){
+			arquitectura.flags.zero_flag = 1;
+		}else if(resultado > 65535){
+			arquitectura.flags.carry_flag = 1;
+		}else if(resultado < 0){
+			arquitectura.flags.signal_flag = 1;
+		}
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 8){ /*SHR*/
-		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 << arquitectura.aritmetic_logic_unit.b2;
+		int resultado = arquitectura.aritmetic_logic_unit.b1 << arquitectura.aritmetic_logic_unit.b2;
+		arquitectura.aritmetic_logic_unit.b3 = resultado;
+		if(resultado == 0){
+			arquitectura.flags.zero_flag = 1;
+		}else if(resultado > 65535){
+			arquitectura.flags.carry_flag = 1;
+		}else if(resultado < 0){
+			arquitectura.flags.signal_flag = 1;
+		}
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 9){ /*SHL*/
-		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 >> arquitectura.aritmetic_logic_unit.b2;
+		int resultado = arquitectura.aritmetic_logic_unit.b1 >> arquitectura.aritmetic_logic_unit.b2;
+		arquitectura.aritmetic_logic_unit.b3 = resultado;
+		if(resultado == 0){
+			arquitectura.flags.zero_flag = 1;
+		}else if(resultado > 65535){
+			arquitectura.flags.carry_flag = 1;
+		}else if(resultado < 0){
+			arquitectura.flags.signal_flag = 1;
+		}
 	}
 }
 
@@ -957,13 +1047,13 @@ void microInstruccionRealizar(char *instruccion){
 	}else if(strcmp(instruccion,"BD<-DL") == 0){
 		setBusDatosAtributo(getParteBajaDX());
 	}else if(strcmp(instruccion,"B1<-BD") == 0){
-		arquitectura.aritmetic_logic_unit.b1 = arquitectura.bus_de_datos.fuente_operando;
+		arquitectura.aritmetic_logic_unit.b1 = arquitectura.bus_de_datos.numero;
 	}else if(strcmp(instruccion,"B2<-BD") == 0){
-		arquitectura.aritmetic_logic_unit.b2 = arquitectura.bus_de_datos.destino_operando;
+		arquitectura.aritmetic_logic_unit.b2 = arquitectura.bus_de_datos.numero;
 	}else if(strcmp(instruccion,"BD<-B3") == 0){
-		arquitectura.bus_de_datos.fuente_operando = arquitectura.aritmetic_logic_unit.b3;
+		arquitectura.bus_de_datos.numero = arquitectura.aritmetic_logic_unit.b3;
 	}else if(strcmp(instruccion,"BD<-B4") == 0){
-		arquitectura.bus_de_datos.destino_operando = arquitectura.aritmetic_logic_unit.b4;
+		arquitectura.bus_de_datos.numero = arquitectura.aritmetic_logic_unit.b4;
 	}else if(strcmp(instruccion,"ALU:add") == 0){
 		arquitectura.aritmetic_logic_unit.operacion = 0;
 		operacionALU();
@@ -994,13 +1084,7 @@ void microInstruccionRealizar(char *instruccion){
 	}else if(strcmp(instruccion,"ALU:shl") == 0){
 		arquitectura.aritmetic_logic_unit.operacion = 9;
 		operacionALU();
-	}else if(strcmp(instruccion,"TEST:carry") == 0){
-
-	}else if(strcmp(instruccion,"TEST:sign") == 0){
-
-	}else if(strcmp(instruccion,"TEST:zero") == 0){
-
-	}else if(strcmp(instruccion,"TEST:interrupt") == 0){
+	}else if(strcmp(instruccion,"TEST:") == 0){
 
 	}else if(strcmp(instruccion,"MEM:read") == 0){
 		setMBRInstruccion(arquitectura.memoria[arquitectura.MAR.direccion].operacion,arquitectura.memoria[arquitectura.MAR.direccion].fuente_operando,arquitectura.memoria[arquitectura.MAR.direccion].destino_operando,arquitectura.memoria[arquitectura.MAR.direccion].dato_extra);
@@ -1017,15 +1101,75 @@ void microInstruccionRealizar(char *instruccion){
 	}
 }
 
+char *obtenerFlag(char *puntero){
+	char *resultado = (char *) malloc(sizeof(puntero));
+	puntero += 5;
+	int i;
+	for(i = 0; i < 2; i++){
+		*resultado = *puntero;
+		resultado ++;
+		puntero ++;
+	}
+	resultado -= 2;
+	return resultado;
+}
+
+int convertirStringNumero2Int(char *puntero){
+	int largo = strlen(puntero);
+	int resultado = 0;
+	int i;
+	for(i = 0; i < largo; i++){
+		resultado += ((*puntero-48)*potencia(10,largo-1));
+		largo--;
+		puntero++;
+	}
+	return resultado;
+}
+
+int obtenerLargoSalto(char *puntero){
+	char *resultado = (char *) malloc(sizeof(puntero));
+	puntero += 8;
+	int largo = strlen(puntero);
+	int i;
+	for(i = 0; i < largo; i++){
+		*resultado = *puntero;
+		resultado ++;
+		puntero ++;
+	}
+	resultado -= largo;
+	return convertirStringNumero2Int(resultado);
+}
+
+
 void ejecutarMicroPrograma(char* nombreArchivoMP){
 	int largo = cantidadFilasArchivo(nombreArchivoMP);
-	char *puntero = (char *) malloc(sizeof(nombreArchivoMP));;
+	char *punteroMP = (char *) malloc(sizeof(nombreArchivoMP));
+	printf("Ejecutando microprograma\n");
 	int i;
-
+	int salto = 0;
 	for(i = 0; i < largo; i++){
-		puntero = leerMicroInstruccion(i,nombreArchivoMP);
-		/*printf("%s\n", puntero);*/
-		microInstruccionRealizar(puntero);		
+		salto = 0;
+		punteroMP = leerMicroInstruccion(i,nombreArchivoMP);
+		if(*punteroMP == 84){
+			char *punteroFlag = (char *) malloc(sizeof(punteroMP));
+			char test[] = {"TEST:"};
+			char *testPuntero = &test[0];
+			strcpy(punteroMP,testPuntero);
+			salto = obtenerLargoSalto(punteroMP);
+			punteroFlag = obtenerFlag(punteroMP);
+			if(strcmp(punteroFlag,"ZF") == 0 && arquitectura.flags.zero_flag == 1){
+				i+=(salto-1);
+			}else if(strcmp(punteroFlag,"CF") == 0 && arquitectura.flags.carry_flag == 1){
+				i+=(salto-1);
+			}else if(strcmp(punteroFlag,"SF") == 0 && arquitectura.flags.signal_flag == 1){
+				i+=(salto-1);
+			}
+			
+		}
+		printf("%s\n", punteroMP);
+		microInstruccionRealizar(punteroMP);	
+		memset(punteroMP, 0, sizeof(punteroMP));
+		
 	}
 	
 }

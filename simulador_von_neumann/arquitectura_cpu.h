@@ -189,4 +189,6 @@ void operacionReadInstruccion(void);
 
 void microInstruccionRealizar(char*);
 
+char *obtenerFlag(char*);
+
 void ejecutarMicroPrograma(char*);

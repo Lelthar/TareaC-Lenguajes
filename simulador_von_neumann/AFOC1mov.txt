@@ -1,2 +1,11 @@
 BD<-AX
-BX<-BD2
+B1<-BD
+BD<-BX
+B2<-BD
+ALU:sub
+TEST:ZF,3
+BD<-B3
+CX<-BD
+BD<-DX
+BD<-AX
+DX<-BD
