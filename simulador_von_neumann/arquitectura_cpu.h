@@ -20,10 +20,10 @@ typedef struct {
 	int esInstruccion;
 
 	/*instruccion*/
-	char operacion[3];//"mul"
-	int fuente_operando;//AX
-	int destino_operando;//BX
-	int dato_extra; // 
+	int operacion;
+	int fuente_operando;
+	int destino_operando;
+	int dato_extra; 
 }Memoria;
 
 struct Program_counter{
@@ -34,6 +34,7 @@ struct Instruction_register{
 	int operacion;
 	int fuente_operando;
 	int destino_operando;
+	int dato_extra;
 };
 
 struct Unidad_de_control{
@@ -43,7 +44,13 @@ struct Unidad_de_control{
 };
 
 struct Bus_de_datos{
+	/*Este dato es por si le pasan un registro*/
 	int entrada;
+
+	int operacion;
+	int fuente_operando;
+	int destino_operando;
+	int dato_extra;
 };
 
 struct Aritmetic_logic_unit{
@@ -61,6 +68,17 @@ struct Registro_de_trabajo{
 	struct Registro DX;
 };
 
+struct Memory_buffer_register{
+	int operacion;
+	int fuente_operando;
+	int destino_operando;
+	int dato_extra;
+};
+
+struct Memory_address_register{
+	int direccion;
+};
+
 typedef struct {
 	struct Flags flags;
 	Memoria  memoria[256];
@@ -70,4 +88,93 @@ typedef struct {
 	struct Bus_de_datos bus_de_datos;
 	struct Aritmetic_logic_unit aritmetic_logic_unit;
 	struct Registro_de_trabajo registro_de_trabajo;
+	struct Memory_buffer_register MBR;
+	struct Memory_address_register MAR;
 }ArquitecturaCPU;
+
+ArquitecturaCPU arquitectura;
+int potencia(int,int);
+void printPuntero(int *,int);
+void iniciarlizadorMemoria(void);
+void inicializadorArquitecturaProcesador(void);
+
+int *convertirDecimal2Binario(int,int*,int);
+int convertirBinario2Decimal(int *,int);
+
+void setRegistroAx(int);
+void setRegistroBx(int);
+void setRegistroCx(int);
+void setRegistroDx(int);
+
+void setParteAltaAX(int);
+void setParteBajaAX(int);
+
+void setParteAltaBX(int);
+void setParteBajaBX(int);
+
+void setParteAltaCX(int);
+void setParteBajaCX(int);
+
+void setParteAltaDX(int);
+void setParteBajaDX(int);
+
+int getRegistroAx(void);
+int getRegistroBx(void);
+int getRegistroCx(void);
+int getRegistroDx(void);
+
+int getParteAltaAX(void);
+int getParteBajaAX(void);
+int getParteAltaBX(void);
+int getParteBajaBX(void);
+int getParteAltaCX(void);
+int getParteBajaCX(void);
+int getParteAltaDX(void);
+int getParteBajaDX(void);
+
+void setCarryFlag(int);
+void setSignalFlag(int);
+void setZeroFlag(int);
+void setInterruptionFlag(int);
+
+int getCarryFlag(void);
+int getSignalFlag(void);
+int getZeroFlag(void);
+int getInterruptionCarryFlag(void);
+
+void setCeldaMemoriaInstruccion(int,char*,int,int);
+void setCeldaMemoriaNumero(int,int);
+
+void setProgramCounter(int);
+int getProgramCounter(void);
+
+void setInstruccionRegister(int,int,int);
+
+/*void setUnidadControl(char*,int,int);*/
+void setBusDatos(int);
+int getBusDatos(void);
+
+void setALU(int,int,int);
+
+void escribirArchivoEstructura(void);
+void leerArchivoEstructura(void);
+char* leerMicroInstruccion(int,char*);
+int cantidadFilasArchivo(char*);
+
+void operacionALU(void);
+
+int sePuedeInsertar(char*,char*);
+
+void EscribirText(char*,char*);
+
+int tieneDosOperandos(char*);
+
+char *obtenerOperacionN(char*);
+char *obtenerOperando1N(char*);
+char *obtenerOperando2N(char*);
+
+char *obtenerOperando2D(char*);
+char *obtenerOperandoUnidad(char*);
+
+void operacionWrite(void);
+void operacionRead(void);

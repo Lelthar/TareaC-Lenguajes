@@ -1,110 +1,40 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "arquitectura_cpu.h"
 
-ArquitecturaCPU arquitectura;
-int potencia(int,int);
-void printPuntero(int *,int);
-void iniciarlizadorMemoria(void);
-void inicializadorArquitecturaProcesador(void);
 
-int *convertirDecimal2Binario(int,int*,int);
-int convertirBinario2Decimal(int *,int);
-
-void setRegistroAx(int);
-void setRegistroBx(int);
-void setRegistroCx(int);
-void setRegistroDx(int);
-
-void setParteAltaAX(int);
-void setParteBajaAX(int);
-
-void setParteAltaBX(int);
-void setParteBajaBX(int);
-
-void setParteAltaCX(int);
-void setParteBajaCX(int);
-
-void setParteAltaDX(int);
-void setParteBajaDX(int);
-
-int getRegistroAx(void);
-int getRegistroBx(void);
-int getRegistroCx(void);
-int getRegistroDx(void);
-
-int getParteAltaAX(void);
-int getParteBajaAX(void);
-int getParteAltaBX(void);
-int getParteBajaBX(void);
-int getParteAltaCX(void);
-int getParteBajaCX(void);
-int getParteAltaDX(void);
-int getParteBajaDX(void);
-
-void setCarryFlag(int);
-void setSignalFlag(int);
-void setZeroFlag(int);
-void setInterruptionFlag(int);
-
-int getCarryFlag(void);
-int getSignalFlag(void);
-int getZeroFlag(void);
-int getInterruptionCarryFlag(void);
-
-void setCeldaMemoriaInstruccion(int,char*,int,int);
-void setCeldaMemoriaNumero(int,int);
-
-void setProgramCounter(int);
-int getProgramCounter(void);
-
-void setInstruccionRegister(int,int,int);
-
-/*void setUnidadControl(char*,int,int);*/
-void setBusDatos(int);
-int getBusDatos(void);
-
-void setALU(int,int,int);
-
-void escribirArchivoEstructura(void);
-void leerArchivoEstructura(void);
-char* leerMicroInstruccion(int,char*);
-void obtenerSegundoOperando(char *);
-
-void operacionALU(void);
-
-void EscribirText(char*,char*);
 
 int main(){
 
-	/*setParteAltaAX(1);*/
-	/*setParteBajaAX(255);*/
-	/*setProgramCounter(256);*/
-	/*printf("%d\n",getProgramCounter());*/
-	/*char palabra[3] = {"mov"};
-	char *puntero = &palabra[0];
-	setUnidadControl(puntero,1,2);*/
-	/*printf("El registro AX tiene: %d y la parte alta tiene: %d La parte baja tiene: %d\n", getRegistroAx(),getParteAltaAX(),getParteBajaAX());*/
- 	/*printPuntero(puntero,16);*/
-	/*escribirArchivoEstructura();*/
+
 	char nombre[] = {"prueba.txt"};
 	char *puntero = &nombre[0];
-	//char texto[] = {"puerta.txt"};
-	//char *punteroTexto = &nombre[0];
-	//printf("Se creó\n");
-	int posicion = 1;
-	char *puntero2;
-	puntero = leerMicroInstruccion(posicion,puntero);
-	printf("%s", puntero);
-	//obtenerSegundoOperando(puntero);
-	//setALU(9,60,2);
-	//operacionALU();
-	//printf("El b3 tiene: %d y el b4 tiene: %d\n", arquitectura.aritmetic_logic_unit.b3,arquitectura.aritmetic_logic_unit.b4);
-	/*EscribirText(puntero,punteroTexto);*/
-	//printf("%s\n",puntero);
-	/*leerArchivoEstructura();*/
+
+	char nombre1[] = {"IN"};
+	char *puntero1 = &nombre1[0];
+
+	char *puntero3 = obtenerOperandoUnidad(puntero1);
+	printf("%s\n",puntero3);
+	/*char texto[] = {"puerta.txt"};
+	char *punteroTexto = &nombre[0];
+	rintf("Se creó\n");*/
+	/*EscribirText(puntero,puntero1);*/
+	/*int largo = cantidadFilasArchivo(puntero);
+	printf("Cantidad filas archivo: %d\n", largo);
+	
+	char *puntero2;*/
+	
+	/*if(strcmp(puntero,puntero1) == 0){
+		printf("si\n");
+	}else{
+		printf("no\n");
+	}*/
+
+	
+	
 	return 0;
 }
 
@@ -653,6 +583,7 @@ void escribirArchivoEstructura(){
 	FILE * file= fopen("output", "wb");
 	if (file != NULL) {
 		fwrite(object, sizeof(struct Bus_de_datos), 1, file);
+		free(object);
 		fclose(file);
 	}
 }
@@ -662,6 +593,7 @@ void leerArchivoEstructura(){
     FILE * file= fopen("output", "rb");
     if (file != NULL) {
         fread(object2, sizeof(struct Bus_de_datos), 1, file);
+        free(object2);
         fclose(file);
     }
     printf("%d\n", object2->entrada);
@@ -673,35 +605,48 @@ void leerArchivoEstructura(){
 
 char *leerMicroInstruccion(int posicion,char *nombreArchivo){
 	/*char const* const fileName = argv[1];*/ /* should check that argc > 1 */
-	//char fileName[] = {"prueba.txt"};
+	
     FILE* file = fopen(nombreArchivo, "r"); /* should check the result */
     char line[256];
     char *str = (char *) malloc(sizeof(line));
-   //char *puntero; 
+    
     if(file != NULL){
-    	while (fgets(line, sizeof(line), file)) {
-	        /* note that fgets don't strip the terminating \n, checking its
-	           presence would allow to handle lines longer that sizeof(line) */
+    	while(fgets(line, sizeof(line), file)) {
+	 		
     		if(posicion == 0){
-    			//printf("%s", line);
+    			
     			break;
     		}else{
     			posicion-=1;
     		}
 	         
 	    }
-	    int i;
-	    for(i = 0; i < 256;i++){
-	    	*str = line[i];
-	    	str += 1;
-	    }
-	    str -= 256;
+    	/*while(!feof(file)){
+    		if(posicion == 0){
+    			fgets(line,sizeof(line),file);
+    			break;
+    		}else{
+    			fgets(line,sizeof(line),file);
+    			posicion-=1;
+    		}
+    	}*/
 
-	    /* may check feof here to make a difference between eof and io failure -- network
-	       timeout for instance */
+	    int i;
+	    for(i = 0; i < strlen(line);i++){
+	    	if(line[i] != 10){
+	    	   *str = line[i];
+	    		str += 1;
+	    	}else{
+	    		str += 1;
+	    	}
+	    	
+	    }
+	    str -= (strlen(line));
+	   
 
 	    fclose(file);
-	    //printf("%s\n", str);
+	    free(str);
+	  	
 	    return str;	
     		
     }else{
@@ -712,62 +657,45 @@ char *leerMicroInstruccion(int posicion,char *nombreArchivo){
 
 }
 
-void obtenerSegundoOperando(char *entrada){
-	printf("%s\n", entrada);
-	char palabra[6];
-	int contador = 0;
-	int i;
-	for(i = 0; i < sizeof(entrada);i++){
-		if(i+1 == sizeof(entrada)){
-			palabra[contador] = *entrada;
-			printf("%d\n", i);
-			contador += 1;
-			entrada += 1;
-		}else if(*entrada == 32){
-			palabra[0] = '\0';
-			contador = 0;
-			entrada += 1;
-			//printf("%d %d %d\n", *entrada,palabra[0],i);
-		}else{
-			palabra[contador] = *entrada;
-			contador += 1;
-			entrada += 1;
-		}
-	} 
-	//char *puntero = &palabra[0];
-	printf("%s\n", palabra);
-	/*while(*entrada != 32){
-		//printf("%c\n", *entrada);
-		entrada += 1;
-	}
-	printf("Encontré un vacio\n");
-	entrada += 1;
+int cantidadFilasArchivo(char *nombreArchivo){
+	/*char const* const fileName = argv[1];*/ /* should check that argc > 1 */
+	
+    FILE* file = fopen(nombreArchivo, "r"); /* should check the result */
+    char line[256];
+    int largo = 0;
+    
+    if(file != NULL){
+    	while (fgets(line, sizeof(line), file)) {
+	 		largo++;
+	    }
 
-	while(*entrada != 32){
-		//printf("%d\n", *entrada);
-		entrada += 1;
-	}
-	printf("Encontré un vacio\n");
-	entrada += 1;
-	while(*entrada != 32){
-		printf("%d\n", *entrada);
-		entrada += 1;
-	}*/
+	    fclose(file);
+	  
+	    return largo;	
+    		
+    }else{
+    	printf("No sirve\n");
+    	return largo;
+    }
+    
+
 }
+
+
 
 void operacionALU(){
 	if(arquitectura.aritmetic_logic_unit.operacion == 0){ /*Suma*/
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 + arquitectura.aritmetic_logic_unit.b2;
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 1){ /*Resta*/
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 - arquitectura.aritmetic_logic_unit.b2;
-	}else if(arquitectura.aritmetic_logic_unit.operacion == 2){ /*Resta*/
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 2){ /*MUL*/
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 * arquitectura.aritmetic_logic_unit.b2;
-	}else if(arquitectura.aritmetic_logic_unit.operacion == 3){ /*Resta*/
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 3){ /*DIV*/
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 / arquitectura.aritmetic_logic_unit.b2;
 		arquitectura.aritmetic_logic_unit.b4 = arquitectura.aritmetic_logic_unit.b1 % arquitectura.aritmetic_logic_unit.b2;
-	}else if(arquitectura.aritmetic_logic_unit.operacion == 4){ /*Resta*/
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 4){ /*AND*/
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 & arquitectura.aritmetic_logic_unit.b2;
-	}else if(arquitectura.aritmetic_logic_unit.operacion == 5){ /*Resta*/
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 5){ /*OR*/
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 | arquitectura.aritmetic_logic_unit.b2;
 	}else if(arquitectura.aritmetic_logic_unit.operacion == 6){ /*Resta*/
 		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 ^ arquitectura.aritmetic_logic_unit.b2;
@@ -780,24 +708,187 @@ void operacionALU(){
 	}
 }
 
-void EscribirText(char *nombreArchivo,char *texto){
-	/*char const* const fileName = argv[1];*/ /* should check that argc > 1 */
-	//char fileName[] = {"prueba.txt"};
-    FILE* file = fopen(nombreArchivo, "a"); /* should check the result */
+int sePuedeInsertar(char* nombreArchivoMP,char *nombreArchivoAFOC){
+	int largo = cantidadFilasArchivo(nombreArchivoAFOC);
+	char *puntero = (char *) malloc(sizeof(nombreArchivoAFOC));;
+	int i;
+
+	for(i = 0; i < largo; i++){
+		
+		puntero = leerMicroInstruccion(i,nombreArchivoAFOC);
+		printf("%s\n", puntero);
+
+		if(strcmp(puntero,nombreArchivoMP) == 0){
+			
+			return 0;
+		}
+	}
+	
+	return 1;
+}
+
+
+void EscribirText(char *nombreArchivoAFOC,char *nombreArchivoMP){
+	
+    FILE* file = fopen(nombreArchivoAFOC, "a"); 
      
     if(file != NULL){
-    	printf("Yo khe se\n");
+    	if(sePuedeInsertar(nombreArchivoMP,nombreArchivoAFOC) == 1){
+    		/*printf("Yo khe se\n");*/
+    		fputs(nombreArchivoMP, file);
+    		fputs("\n",file);
+    	}else{
+    		printf("Ya existe\n");
+    	}
     	
-    	fputs(texto, file);
-    	fputs("\n",file);
-    	//fputs(texto, file);
-    	//fwrite(texto, sizeof(texto),1, file);
 	    fclose(file);
     		
     }else{
-    	printf("Que está pasando doctor garcia\n");
+    	/*printf("Que está pasando doctor garcia\n");*/
     }
-    
-    
 
+}
+
+int tieneDosOperandos(char *instruccion){
+	char *puntero = (char *) malloc(sizeof(instruccion));
+	int contador = 0;
+	while(*instruccion != 32){
+		*puntero = *instruccion;
+		puntero += 1;
+		instruccion +=1;
+		contador ++;
+	}
+	puntero -= contador;
+	if(strcmp(puntero,"ALU:") == 0 || strcmp(puntero,"MEM:") == 0 || strcmp(puntero,"TEST:") == 0){
+		printf("Sirve\n");
+		return 0;
+	}else{
+		printf("No sirve\n");
+		return 1;
+	}
+	
+}
+
+/* ALU: operacion se usa obtenerOperacionN  obtenerOperando2D
+   reg16 <- BD se usa obtenerOperacionN obtenerOperando1N obtenerOperando2N
+   IN se usa obtenerOperandoUnidad
+*/
+char* obtenerOperacionN(char *instruccion){
+	char *puntero = (char *) malloc(sizeof(instruccion));
+	int contador = 0;
+
+	while(*instruccion != 32){
+		*puntero = *instruccion;
+		puntero += 1;
+		instruccion +=1;
+		contador ++;
+	}
+	puntero -= contador;
+
+	return puntero;
+}
+
+char* obtenerOperando1N(char *instruccion){
+	char *puntero = (char *) malloc(sizeof(instruccion));
+	int contador = 0;
+
+	while(*instruccion != 32){
+		instruccion +=1;
+	}
+
+	instruccion+=1;
+
+	while(*instruccion != 32){
+		*puntero = *instruccion;
+		puntero += 1;
+		instruccion +=1;
+		contador ++;
+	}
+
+	puntero -= contador;
+
+	return puntero;
+}
+
+char* obtenerOperando2N(char *instruccion){
+	char *puntero = (char *) malloc(sizeof(instruccion));
+	int contador = 0;
+	int espacios = 0;
+	int largo = strlen(instruccion);
+	/*printf("%d\n", strlen(instruccion)); *//*"reg16 <- BD"*/
+	int i;
+	for(i = 0; i < largo; i++){
+		if(espacios == 2){
+			*puntero = *instruccion;
+			puntero += 1;
+			instruccion +=1;
+			contador ++;
+		}else if(*instruccion == 32){
+			instruccion += 1;
+			espacios += 1;
+		}else{
+			instruccion += 1;
+		}
+	}
+	
+	puntero -= contador;
+	return puntero;
+}
+
+char* obtenerOperando2D(char *instruccion){
+	char *puntero = (char *) malloc(sizeof(instruccion));
+	int contador = 0;
+	int espacios = 0;
+	int largo = strlen(instruccion);
+	/*printf("%d\n", strlen(instruccion)); *//*"reg16 <- BD"*/
+	int i;
+	for(i = 0; i < largo; i++){
+		if(espacios == 1){
+			*puntero = *instruccion;
+			puntero += 1;
+			instruccion +=1;
+			contador ++;
+		}else if(*instruccion == 32){
+			instruccion += 1;
+			espacios += 1;
+		}else{
+			instruccion += 1;
+		}
+	}
+	
+	puntero -= contador;
+	return puntero;
+}
+
+char* obtenerOperandoUnidad(char *instruccion){
+	char *puntero = (char *) malloc(sizeof(instruccion));
+	int contador = 0;
+	int largo = strlen(instruccion);
+	/*printf("%d\n", strlen(instruccion)); *//*"reg16 <- BD"*/
+	int i;
+	for(i = 0; i < largo; i++){
+		*puntero = *instruccion;
+		puntero += 1;
+		instruccion +=1;
+		contador ++;
+
+	}
+	
+	puntero -= contador;
+
+	return puntero;
+}
+
+void operacionWrite(){
+	arquitectura.memoria[arquitectura.MAR.direccion].operacion = arquitectura.MBR.operacion;
+	arquitectura.memoria[arquitectura.MAR.direccion].fuente_operando = arquitectura.MBR.fuente_operando;
+	arquitectura.memoria[arquitectura.MAR.direccion].destino_operando = arquitectura.MBR.destino_operando;
+	arquitectura.memoria[arquitectura.MAR.direccion].dato_extra = arquitectura.MBR.dato_extra;
+}
+
+void operacionRead(){
+	arquitectura.MBR.operacion = arquitectura.memoria[arquitectura.MAR.direccion].operacion;
+	arquitectura.MBR.fuente_operando = arquitectura.memoria[arquitectura.MAR.direccion].fuente_operando;
+	arquitectura.MBR.destino_operando = arquitectura.memoria[arquitectura.MAR.direccion].destino_operando;
+	arquitectura.MBR.dato_extra = arquitectura.memoria[arquitectura.MAR.direccion].dato_extra;
 }
