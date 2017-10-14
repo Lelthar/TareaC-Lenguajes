@@ -1,5 +1,7 @@
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "arquitectura_cpu.h"
 
@@ -69,21 +71,31 @@ void setALU(int,int,int);
 
 void escribirArchivoEstructura(void);
 void leerArchivoEstructura(void);
+char* leerMicroInstruccion(int,char*);
+void obtenerSegundoOperando(char *);
+
+void operacionALU(void);
+
+void EscribirText(char*,char*);
 
 int main(){
 
-	/*setParteAltaAX(1);*/
-	/*setParteBajaAX(255);*/
-	/*setProgramCounter(256);*/
-	/*printf("%d\n",getProgramCounter());*/
-	/*char palabra[3] = {"mov"};
-	char *puntero = &palabra[0];
-	setUnidadControl(puntero,1,2);*/
-	/*printf("El registro AX tiene: %d y la parte alta tiene: %d La parte baja tiene: %d\n", getRegistroAx(),getParteAltaAX(),getParteBajaAX());*/
- 	/*printPuntero(puntero,16);*/
-	/*escribirArchivoEstructura();*/
-	printf("Se creó\n");
-	/*leerArchivoEstructura();*/
+	
+	char nombre[] = {"prueba.txt"};
+	char *puntero = &nombre[0];
+	//char texto[] = {"puerta.txt"};
+	//char *punteroTexto = &nombre[0];
+	//printf("Se creó\n");
+	int posicion = 0;
+	//char *puntero = &;
+	puntero = leerMicroInstruccion(posicion,puntero);
+	printf("%s\n", puntero);
+	//obtenerSegundoOperando(puntero);
+	//setALU(9,60,2);
+	//operacionALU();
+	//printf("El b3 tiene: %d y el b4 tiene: %d\n", arquitectura.aritmetic_logic_unit.b3,arquitectura.aritmetic_logic_unit.b4);
+	//EscribirText(puntero,punteroTexto);
+
 	return 0;
 }
 
@@ -644,4 +656,135 @@ void leerArchivoEstructura(){
         fclose(file);
     }
     printf("%d\n", object2->entrada);
+}
+
+/*void escribirText(){
+
+}*/
+
+char *leerMicroInstruccion(int posicion,char *nombreArchivo){
+	/*char const* const fileName = argv[1];*/ /* should check that argc > 1 */
+	//char fileName[] = {"prueba.txt"};
+    FILE* file = fopen(nombreArchivo, "r"); /* should check the result */
+    char line[256];
+    char *str;
+   //char *puntero; 
+    if(file != NULL){
+    	while (fgets(line, sizeof(line), file)) {
+	        /* note that fgets don't strip the terminating \n, checking its
+	           presence would allow to handle lines longer that sizeof(line) */
+    		if(posicion == 0){
+    			//printf("%s", line);
+    			strcpy(str,line);
+    			break;
+    		}else{
+    			posicion-=1;
+    		}
+	         
+	    }
+	    
+
+	    /* may check feof here to make a difference between eof and io failure -- network
+	       timeout for instance */
+
+	    fclose(file);
+	    //printf("%s\n", str);
+	    return str;	
+    		
+    }else{
+    	printf("No sirve\n");
+    	return str;
+    }
+    
+
+}
+
+void obtenerSegundoOperando(char *entrada){
+	printf("%s\n", entrada);
+	char palabra[6];
+	int contador = 0;
+	int i;
+	for(i = 0; i < sizeof(entrada);i++){
+		if(i+1 == sizeof(entrada)){
+			palabra[contador] = *entrada;
+			printf("%d\n", i);
+			contador += 1;
+			entrada += 1;
+		}else if(*entrada == 32){
+			palabra[0] = '\0';
+			contador = 0;
+			entrada += 1;
+			//printf("%d %d %d\n", *entrada,palabra[0],i);
+		}else{
+			palabra[contador] = *entrada;
+			contador += 1;
+			entrada += 1;
+		}
+	} 
+	//char *puntero = &palabra[0];
+	printf("%s\n", palabra);
+	/*while(*entrada != 32){
+		//printf("%c\n", *entrada);
+		entrada += 1;
+	}
+	printf("Encontré un vacio\n");
+	entrada += 1;
+
+	while(*entrada != 32){
+		//printf("%d\n", *entrada);
+		entrada += 1;
+	}
+	printf("Encontré un vacio\n");
+	entrada += 1;
+	while(*entrada != 32){
+		printf("%d\n", *entrada);
+		entrada += 1;
+	}*/
+}
+
+void operacionALU(){
+	if(arquitectura.aritmetic_logic_unit.operacion == 0){ /*Suma*/
+		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 + arquitectura.aritmetic_logic_unit.b2;
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 1){ /*Resta*/
+		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 - arquitectura.aritmetic_logic_unit.b2;
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 2){ /*Resta*/
+		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 * arquitectura.aritmetic_logic_unit.b2;
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 3){ /*Resta*/
+		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 / arquitectura.aritmetic_logic_unit.b2;
+		arquitectura.aritmetic_logic_unit.b4 = arquitectura.aritmetic_logic_unit.b1 % arquitectura.aritmetic_logic_unit.b2;
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 4){ /*Resta*/
+		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 & arquitectura.aritmetic_logic_unit.b2;
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 5){ /*Resta*/
+		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 | arquitectura.aritmetic_logic_unit.b2;
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 6){ /*Resta*/
+		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 ^ arquitectura.aritmetic_logic_unit.b2;
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 7){ /*Resta*/
+		arquitectura.aritmetic_logic_unit.b3 = ~ arquitectura.aritmetic_logic_unit.b1;
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 8){ /*Resta*/
+		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 << arquitectura.aritmetic_logic_unit.b2;
+	}else if(arquitectura.aritmetic_logic_unit.operacion == 9){ /*Resta*/
+		arquitectura.aritmetic_logic_unit.b3 = arquitectura.aritmetic_logic_unit.b1 >> arquitectura.aritmetic_logic_unit.b2;
+	}
+}
+
+void EscribirText(char *nombreArchivo,char *texto){
+	/*char const* const fileName = argv[1];*/ /* should check that argc > 1 */
+	//char fileName[] = {"prueba.txt"};
+    FILE* file = fopen(nombreArchivo, "a"); /* should check the result */
+     
+    if(file != NULL){
+    	printf("Yo khe se\n");
+    	
+    	fputs(texto, file);
+    	fputs("\n",file);
+    	//fputs(texto, file);
+    	//fwrite(texto, sizeof(texto),1, file);
+	    fclose(file);
+    		
+    }else{
+    	printf("Que está pasando doctor garcia\n");
+    }
+    
+    
+
 }

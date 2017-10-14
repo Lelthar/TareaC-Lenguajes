@@ -20,10 +20,10 @@ typedef struct {
 	int esInstruccion;
 
 	/*instruccion*/
-	char operacion[3];
-	int fuente_operando;
-	int destino_operando;
-	int dato_extra;
+	char operacion[3];//"mul"
+	int fuente_operando;//AX
+	int destino_operando;//BX
+	int dato_extra; // 
 }Memoria;
 
 struct Program_counter{
