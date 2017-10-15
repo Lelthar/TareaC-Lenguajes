@@ -10,7 +10,7 @@
 int main(){
 
 
-	char nombre[] = {"AFOC1mov.txt"};
+	/*char nombre[] = {"AFOC1mov.txt"};
 	char *puntero = &nombre[0];
 
 	char nombre1[] = {"TEST:ZF,2"};
@@ -18,17 +18,17 @@ int main(){
 
 	/*puntero = obtenerFlag(puntero1);
 	printf("%s\n", puntero1);*/
-	setRegistroAx(6);
+	/*setRegistroAx(6);
 	setRegistroBx(5);
-	ejecutarMicroPrograma(puntero);
+	ejecutarMicroPrograma(puntero);*/
 	/*arquitectura.aritmetic_logic_unit.b1 = getRegistroAx();
 	arquitectura.aritmetic_logic_unit.b2 = getRegistroBx();*/
 	/*microInstruccionRealizar(puntero1);*/
 	/**/
 	/*setRegistroCx(arquitectura.aritmetic_logic_unit.b3);*/
-
+	leerArchivoEstructura();
 	printf("RegistroCX: %d RegistroDX: %d\n", getRegistroCx(),getRegistroDx());
-	
+	/*escribirArchivoEstructura();*/
 
 	
 	
@@ -574,26 +574,24 @@ void setMBRDato(numero){
 }
 
 void escribirArchivoEstructura(){
-	struct Bus_de_datos *object = malloc(sizeof(struct Bus_de_datos));
-	object->numero = 5;
+	ArquitecturaCPU *object = malloc(sizeof(ArquitecturaCPU));
+	object = &arquitectura;
 
-	FILE * file= fopen("output", "wb");
+	FILE * file= fopen("AFOC1estructura", "wb");
 	if (file != NULL) {
-		fwrite(object, sizeof(struct Bus_de_datos), 1, file);
-		free(object);
+		fwrite(object, sizeof(ArquitecturaCPU), 1, file);
 		fclose(file);
 	}
 }
 
 void leerArchivoEstructura(){
-	struct Bus_de_datos *object2=malloc(sizeof(struct Bus_de_datos));
-    FILE * file= fopen("output", "rb");
+	ArquitecturaCPU *object2 = malloc(sizeof(ArquitecturaCPU));
+	object2 = &arquitectura;
+    FILE * file= fopen("AFOC1estructura", "rb");
     if (file != NULL) {
-        fread(object2, sizeof(struct Bus_de_datos), 1, file);
-        free(object2);
+        fread(object2, sizeof(ArquitecturaCPU), 1, file);
         fclose(file);
     }
-    printf("%d\n", object2->numero);
 }
 
 /*void escribirText(){
